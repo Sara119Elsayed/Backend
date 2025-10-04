@@ -1,26 +1,23 @@
-const books =  require('../Models/books');
+const Books =  require('../Models/Book');
 
 
 let getAllBooks = async (req, res) => {
     try {
-        let allBooks = await books.find();
+        const allBooks = await Books.find()|| {message:"No Books Found"};
         res.status(200).json(allBooks);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 }
 
-let GetBookById = async (req, res) => {
+let getBookById = async (req, res) => {
     try {
-        let id = req.params.id; 
-        let book = await books.findById(id);
-        if (book) {
-            res.status(200).json(book);}
-        else {
-            res.status(404).json({ message: 'Book not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+        const book = await Books.findById(req.params.id) || {message:"Book Not Found"};
+        console.log(book);
+       res.status(200).json(book);
+    
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 }
 
@@ -28,11 +25,11 @@ let GetBookById = async (req, res) => {
 
 let addNewBook = async (req, res) => {
     try {
-        let newBook = new books(req.body);
-        let addedBook = await newBook.save();
-        res.status(201).json(addedBook);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+        const newBook = new Books(req.body);
+        await newBook.save();
+        res.status(201).json(newBook);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 }
 
@@ -40,21 +37,21 @@ let updateBook = async (req, res) => {
 
 try {
    let id =  req.params.id;
-   let updatedBook = await books.findByIdAndUpdate(id, req.body, { new: true });
+   const updatedBook = await Books.findByIdAndUpdate(id, req.body,true);
    res.status(200).json(updatedBook);      
   
-}catch(error){
-    res.status(500).json({ message: error.message })
+}catch(err){
+    res.status(500).json({ message: err.message })
 };
 }
 
 let deleteBook = async (req, res) => {
     try {
-        let id = req.params.id;
-        await books.findByIdAndDelete(id);
+        await Books.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: 'Book deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    } catch (err)
+     {
+        res.status(500).json({ message: err.message });
     }
 }   
 
@@ -62,4 +59,4 @@ let deleteBook = async (req, res) => {
 
 
 
-module.exports = { getAllBooks,GetBookById ,addNewBook , updateBook , deleteBook};
+module.exports = { getAllBooks,getBookById ,addNewBook , updateBook , deleteBook};
